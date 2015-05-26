@@ -6,19 +6,18 @@ struct nodo{
 	struct nodo *siguiente;
 };
 
+/*declaramos una variable _nodo de tipo de dato nodo que es la estructura*/
 typedef struct nodo _nodo;
 
+/*declaracion de las funciones para el manejo de la lista*/
 _nodo *crear_Lista(_nodo *apuntador);
 _nodo *insertar(int valor, _nodo *apuntador);
 _nodo *eliminar_elemento(int valor, _nodo *apuntador);
 void imprimir_lista(_nodo *apuntador);
-void borrar_ocurrencia(_nodo *apuntador, int valor);
-
-
-
+/*fin de la declaracion de las funcines*/
 int main(int argc, char *argv[]) {
 	int op, numero;
-	_nodo *inicioLista = NULL;
+	_nodo *inicioLista;
 
 	inicioLista = crear_Lista(inicioLista);
 
@@ -46,7 +45,7 @@ int main(int argc, char *argv[]) {
 			printf("Ingrese un numero a eliminar\n");
 			scanf("%d", &numero);
 
-			borrar_ocurrencia(inicioLista,numero);
+			eliminar_elemento(numero, inicioLista);
 		}
 	}while(op != 4);
 
@@ -108,57 +107,34 @@ void imprimir_lista(_nodo *apuntador){
 /*fin de la funcion imprimir*/
 
 
-void borrar_ocurrencia(_nodo *apuntador, int valor){
-	_nodo *apuntador_auxiliar;
-	
-	apuntador_auxiliar = apuntador;
-	
-	while(apuntador_auxiliar != NULL){
-		if(apuntador_auxiliar->valor == valor){
-			eliminar_elemento(valor,apuntador_auxiliar);
-		}
-		apuntador_auxiliar = apuntador_auxiliar->siguiente;
-	}
-}
-
 /*aqui esta es la funcion que el ejercicio pide.*/
 /*funcion para eliminar elementos de la lista*/
 _nodo *eliminar_elemento(int valor, _nodo *apuntador){
+	/*variables puntero de tipo _nodo que me permitiran la manipulacion 
+	de la lista*/
+	_nodo *puntero_auxiliar, *nodo_anterior;
+
+	/*posicionamos en el incio al puntero_auxiliar*/
+	puntero_auxiliar = apuntador;
+	/*nodo_anterior lo igualamos a NULL*/
+	nodo_anterior = NULL;
+
+	if(puntero_auxiliar->valor == valor){
+		nodo_anterior = puntero_auxiliar;
+		puntero_auxiliar = puntero_auxiliar->siguiente;
+		nodo_anterior->siguiente = puntero_auxiliar->siguiente;
 	
-		_nodo *indice,*cabeza;
-		
-		cabeza=apuntador;
-		
-		for(indice=cabeza; indice!=NULL; indice=indice->siguiente)
-			
-		{
-			
-			if(indice->valor==valor)
-				
-			{
-				
-				cabeza=cabeza->siguiente;
-				
-				
-				
-				if(apuntador==NULL || apuntador->siguiente==NULL){
-					
-					printf("ERROR, ya no hay m s datos\n");
-				}
-				
-				else
-					
-					{
-						
-						cabeza->siguiente=indice->siguiente;
-						
-						free(indice);
-						
-					}
-				
-			}
-			
-		}
+		free(puntero_auxiliar);
+		return NULL;
+	}
 	
+	/*ciclo que permite iterar la lista*/
+	while(puntero_auxiliar != NULL && puntero_auxiliar->valor != valor){
+		nodo_anterior = puntero_auxiliar;
+		puntero_auxiliar= puntero_auxiliar->siguiente;
+	}
+	nodo_anterior->siguiente = puntero_auxiliar->siguiente;
+
+	free(puntero_auxiliar);
 }
 /*fin de la funcion eliminar nodo*/
