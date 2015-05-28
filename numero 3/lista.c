@@ -12,14 +12,14 @@ typedef struct nodo _nodo;
 /*declaracion de las funciones para el manejo de la lista*/
 _nodo *crear_Lista(_nodo *apuntador);
 _nodo *insertar(int valor, _nodo *apuntador);
-_nodo *eliminar_elemento(int valor, _nodo *apuntador);
+void eliminar_elemento(int valor, _nodo **apuntador);
 void imprimir_lista(_nodo *apuntador);
 /*fin de la declaracion de las funcines*/
 int main(int argc, char *argv[]) {
 	int op, numero;
 	_nodo *inicioLista;
 
-	inicioLista = crear_Lista(inicioLista);
+	inicioLista = NULL;
 
 	do{
 		printf("1- insertar en lista\n");
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 			printf("Ingrese un numero a eliminar\n");
 			scanf("%d", &numero);
 
-			eliminar_elemento(numero, inicioLista);
+			eliminar_elemento(numero, &inicioLista);
 		}
 	}while(op != 4);
 
@@ -109,32 +109,21 @@ void imprimir_lista(_nodo *apuntador){
 
 /*aqui esta es la funcion que el ejercicio pide.*/
 /*funcion para eliminar elementos de la lista*/
-_nodo *eliminar_elemento(int valor, _nodo *apuntador){
-	/*variables puntero de tipo _nodo que me permitiran la manipulacion 
-	de la lista*/
-	_nodo *puntero_auxiliar, *nodo_anterior;
-
-	/*posicionamos en el incio al puntero_auxiliar*/
-	puntero_auxiliar = apuntador;
-	/*nodo_anterior lo igualamos a NULL*/
-	nodo_anterior = NULL;
-
-	if(puntero_auxiliar->valor == valor){
-		nodo_anterior = puntero_auxiliar;
-		puntero_auxiliar = puntero_auxiliar->siguiente;
-		nodo_anterior->siguiente = puntero_auxiliar->siguiente;
+void eliminar_elemento(int valor, _nodo **apuntador){
+	_nodo *nuevo, *viejo;
 	
-		free(puntero_auxiliar);
-		return NULL;
+	nuevo = NULL;
+	viejo = *apuntador;
+	
+	while(viejo != NULL){
+		if(viejo->valor != valor){
+			nuevo = insertar(viejo->valor, nuevo);
+			free(viejo);
+		}
+		viejo = viejo->siguiente;
 	}
 	
-	/*ciclo que permite iterar la lista*/
-	while(puntero_auxiliar != NULL && puntero_auxiliar->valor != valor){
-		nodo_anterior = puntero_auxiliar;
-		puntero_auxiliar= puntero_auxiliar->siguiente;
-	}
-	nodo_anterior->siguiente = puntero_auxiliar->siguiente;
-
-	free(puntero_auxiliar);
+	*apuntador = nuevo;
+	
 }
 /*fin de la funcion eliminar nodo*/
