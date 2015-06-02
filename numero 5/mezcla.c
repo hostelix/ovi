@@ -16,6 +16,7 @@ _nodo *insertar(int valor, _nodo *apuntador);
 void imprimir_lista(_nodo *apuntador);
 void ordenar_lista(_nodo *lista);
 _nodo *mezcla2(_nodo *lista1, _nodo *lista2);
+int lista_vacia(_nodo *lista);
 
 /*fin de la declaracion de las funcines*/
 int main(int argc, char *argv[]) {
@@ -36,30 +37,45 @@ int main(int argc, char *argv[]) {
 		switch(op){
 			case 1:{
 				do{
-					printf("Introduce un numero.. Presione 0 para salir "); scanf("%d",&numero);
+					printf("Introduce un numero.. Presione 0 para dejar de introducir elementos\n >"); scanf("%d",&numero);
 					if(numero != 0) lista1 = insertar(numero, lista1);
 				}while(numero!=0);
 				break;
 			}
 			case 2:{
 				do{
-					printf("Introduce un numero.. Presione 0 para salir "); scanf("%d",&numero);
+					printf("Introduce un numero.. Presione 0 para dejar de introducir elementos\n >"); scanf("%d",&numero);
 					if(numero != 0) lista2 = insertar(numero, lista2);
 				}while(numero!=0);
 				break;
 			}
 			case 3:
-				ordenar_lista(lista1);
-				ordenar_lista(lista2);
-				printf("Lista 1\n");
-				imprimir_lista(lista1);
-				printf("Lista 2\n");
-				imprimir_lista(lista2);
+				if(!lista_vacia(lista1) && !lista_vacia(lista2)){
+					ordenar_lista(lista1);
+					ordenar_lista(lista2);
+					printf("Lista 1\n");
+					imprimir_lista(lista1);
+					printf("Lista 2\n");
+					imprimir_lista(lista2);
+				}else{
+					printf("Error, alguna lista que se va a ordenar esta vacia\n");
+				}
 			break;
 			
 			case 4:
-				printf("Lista mezclada:\n");
-				imprimir_lista(mezcla2(lista1, lista2));
+				if(!lista_vacia(lista1) && !lista_vacia(lista2)){
+					printf("Lista mezclada:\n");
+					imprimir_lista(mezcla2(lista1, lista2));
+				}
+				else{
+					printf("Error, alguna lista que se va a mezclar esta vacia\n");
+				}
+			break;
+				
+			default:
+				printf("Opcion invalida, Intente nuevamente\n");
+			break;
+			
 		}
 	}while(op != 5);
 
@@ -152,4 +168,8 @@ _nodo *mezcla2(_nodo *lista1, _nodo *lista2){
 	}
 	
 	return lista_final;
+}
+
+int lista_vacia(_nodo *lista) {
+	return (lista == NULL);
 }

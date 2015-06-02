@@ -44,14 +44,18 @@ int del_pila(Pila *pila){
 
 void remplazar(Pila *pila, int viejo, int nuevo){
 	TNodo nodo;
-	
+	int encontrado = 0;
 	nodo = *pila;
 	
 	while(nodo){
 		if(nodo->valor == viejo){
+			encontrado++;
 			nodo->valor = nuevo;
 		}
 		nodo = nodo->siguiente;
+	}
+	if(encontrado == 0){
+		printf("\nError elemento no encontrado en la pila\n");
 	}
 }
 
@@ -65,6 +69,10 @@ void mostrar(Pila *pila){
 		nodo = nodo->siguiente;
 	}
 	printf("\n");
+}
+
+int pila_vacia(Pila *pila){
+	return (*pila)?(1):(0);
 }
 
 
@@ -86,27 +94,41 @@ int main(int argc, char *argv[]) {
 		switch(op){
 			case 1:
 				do{
-					printf("Introduce un numero.. Presione 0 para salir "); scanf("%d",&num);
+					printf("Introduce un numero.. Presione 0 para dejar de ingresar elementos\n >"); scanf("%d",&num);
 					if(num != 0) app_pila(&nueva_pila,num);
 				}while(num!=0);
 			break;
 			
 			case 2:
-				printf("Introduce el numero que buscara >");
-				scanf("%d",&num);
-				
-				printf("Introduce el numero que remplazara>");
-				scanf("%d",&num2);
-				
-				remplazar(&nueva_pila,num,num2);
+				if(pila_vacia(&nueva_pila)){
+					printf("Introduce el numero que buscara >");
+					scanf("%d",&num);
+					
+					printf("Introduce el numero que remplazara>");
+					scanf("%d",&num2);
+					
+					remplazar(&nueva_pila,num,num2);
+				}
+				else{
+					printf("Error la pila esta vacia\n");
+				}
 			break;
 			
 			case 3:	
-				mostrar(&nueva_pila);
+				if(pila_vacia(&nueva_pila)){
+					mostrar(&nueva_pila);
+				}
+				else{
+					printf("Error la pila esta vacia\n");
+				}
 			break;
 			
 			case 4:	
 				exit(EXIT_SUCCESS);
+			break;
+			
+			default:
+				printf("Opcion invalida, Intente nuevamente\n");
 			break;
 		}
 	}while(1);
