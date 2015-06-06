@@ -18,7 +18,6 @@ typedef struct{
 int salir = 0;
 int num_clientes = 0, sum_tiempo_atender = 0;
 int num_clientes_tiempo_dado = 0;
-time_t inicio, fin;
 double tiempo_total = 0;
 int pase = 0;
 
@@ -41,15 +40,12 @@ void *atender_cola(void* parametro){
 			pase = 1;
 		}
 		
-		inicio = time(NULL);
-		
 		if(cola_vacia(&tmp->cola)){
 			int x = del_cola(&tmp->cola);
 			int tiempo = generar_tiempo();
 		
 			clear();
 			gotoxy(10,10);
-			
 			printf("Nro [%d] - {Cliente atendido} -> Tiempo de atencion [%d]\n",x,tiempo);
 			
 			num_clientes++ ;
@@ -64,10 +60,6 @@ void *atender_cola(void* parametro){
 			printf("No hay clientes en la cola\n");
 			sleep(1);
 		}
-		
-		fin = time(NULL);
-		
-		tiempo_total+=difftime(fin,inicio);
 	}
 	
 	return NULL;
@@ -76,11 +68,7 @@ void *atender_cola(void* parametro){
 void *llenar_cola(void* parametro){
 	Tparametros *tmp = (Tparametros*)parametro;
 	
-	
-	
 	while(!salir && verficar_tiempo(tiempo_total)){
-		inicio = time(NULL);
-		
 		sleep(generar_tiempo());
 		
 		gotoxy(10,30);
@@ -88,10 +76,6 @@ void *llenar_cola(void* parametro){
 		app_cola(&tmp->cola);
 		
 		fflush(stdout);
-
-		fin = time(NULL);
-		
-		tiempo_total+=difftime(fin,inicio);
 	}
 	
 	printf("\n***************************************\n");
@@ -105,11 +89,25 @@ void *llenar_cola(void* parametro){
 	return NULL;
 }
 
+void *reloj(void *parametro){
+	clock_t t,ts;
+	int segundos=0;
+	ts=clock()+CLOCKS_PER_SEC;
+	for(;;){
+		if((t=clock())>=ts){
+			
+			gotoxy(10,5);
+			++tiempo_total;
+			printf("Segundos transcurridos: %d seg\n",++segundos);
+			ts=t+CLOCKS_PER_SEC;
+		}
+	}
+}
 int main() {
 
 	Tparametros *p = (Tparametros*)malloc(sizeof(Tparametros));
 	
-	pthread_t hilo_cajero,hilo_llegada;
+	pthread_t hilo_cajero,hilo_llegada,hilo_tiempo;
 	
 	srand(time(NULL));
 	
@@ -118,7 +116,8 @@ int main() {
 	p->cola->ultimo = NULL;
 	
 	pthread_create(&hilo_cajero , NULL , atender_cola,(void *)p);
-	pthread_create(&hilo_llegada , NULL , llenar_cola,(void *)p ) ;
+	pthread_create(&hilo_llegada , NULL , llenar_cola,(void *)p );
+	pthread_create(&hilo_tiempo , NULL , reloj,NULL );
 	
 	pthread_join(hilo_cajero,NULL);
 	pthread_join(hilo_llegada,NULL);
